@@ -91,11 +91,11 @@ public class MinHash extends MainMinHash {
 		private static int hashCode(parameters p, String key) {
 			int length = key.length();
 			int hk;
-			hk = 7;
-			for (int J = 0; J < length; J++) {
-				hk = p.getC() * hk + key.charAt(J) % p.getP();
-				hk = ((p.getA() * hk + p.getB() % p.getP()) % p.getM()) + 1;
+			hk = key.charAt(0);
+			for (int J = 1; J < length; J++) {
+				hk = (p.getC() * hk + key.charAt(J)) % p.getP();
 			}
+			hk = (((p.getA() * hk + p.getB()) % p.getP()) % p.getM()) + 1;
 			if(hk < 0)
 				hk = Math.abs(hk);
 
@@ -114,7 +114,7 @@ public class MinHash extends MainMinHash {
 				pp += 2;
 			}
 			Random r = new Random();
-			int upperBound = (int) pp - 1;
+			int upperBound = pp - 1;
 			p.setA(r.nextInt(upperBound - 1) + 1);
 			p.setB(r.nextInt(upperBound));
 			p.setC(r.nextInt(upperBound - 1) + 1);

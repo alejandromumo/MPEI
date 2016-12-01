@@ -27,15 +27,19 @@ public class TxTReader {
 
 			br = new BufferedReader(new FileReader(txtFile));
 			while ((line = br.readLine()) != null) {
-				
-				String[] separados = line.split(" ");
-				for(String s : separados){
-					if(!s.equals(" ") && !s.equals("\n")){
-						result.add(s.toLowerCase());
+				if (line.trim().length() == 0)
+					continue;
+				else {
+					String[] separados = line.split(" ");
+					for (String s : separados) {
+						if (!s.equals(" ") && !s.equals("\n")) {
+							result.add(s.toLowerCase());
+						}
 					}
 				}
 			}
 			this.strings = result;
+			br.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 

@@ -39,9 +39,8 @@ public class LSH extends MainMinHash {
 			for (int K = J; K < J + linhasPorBanda; K++) {
 				banda.add(this.signatureMatrix[K][docAnalysing]);
 			}
-			System.out.printf("Banda : %s\n", banda.toString());
+			//System.out.printf("Banda : %s\n", banda.toString());
 			// Banda construída, pronta a ser calculado o seu hashcode
-
 			int hashCode = hashCode(p, banda);
 			ArrayList<Integer> tmp = this.buckets.get(hashCode);
 			if (tmp == null)
@@ -55,9 +54,9 @@ public class LSH extends MainMinHash {
 				J = -linhasPorBanda;
 			}
 		}
-		for (int k : this.buckets.keySet()) {
+		/*for (int k : this.buckets.keySet()) {
 			System.out.printf("Key : %d -> Value : %s\n", k, this.buckets.get(k));
-		}
+		}*/
 		checkPairs();
 		System.out.printf("Candidate pairs: \n%s\n", this.pairs_table.toString());
 	}

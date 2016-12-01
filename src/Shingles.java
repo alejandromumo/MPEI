@@ -3,16 +3,19 @@ import java.util.ArrayList;
 public class Shingles {
 	private ArrayList<ArrayList<String>> docs_shingles;
 	
-	public Shingles(ArrayList<ArrayList<String>> documents, int n){
+	//Construtor
+	
+	public Shingles(ArrayList<ArrayList<String>> documents, int n, boolean group_by_words){
 		docs_shingles = new ArrayList<ArrayList<String>>();
 		for(ArrayList<String> s : documents){
-			StringToShingles(s, n);
+			if(group_by_words) StringToShingles(s, n);
+			else StringToShinglesChar(s, n);
 		}
 		
 	}
 	
 	
-	// Returns shingles from String s, grouped n by n Strings.
+	// Create shingles from String s, grouped n by n words.
 	
 	private void StringToShingles(ArrayList<String> s,int n){
 		ArrayList<String> shingles = new ArrayList<String>();
@@ -28,16 +31,18 @@ public class Shingles {
 	}
 	
 	
-	// TODO - Return shingles from Strings , grouped n by n chars
+	// Create shingles from String s, grouped n by n chars
 	
-	@SuppressWarnings("unused")
 	private void StringToShinglesChar(ArrayList<String> s,int n){
 		ArrayList<String> shingles = new ArrayList<String>();
-		System.out.printf("Strings s : %s \n", s.toString());
-		for(int I = 0; I < s.size(); I++){
-			String x = " ";
+		String toda = "";
+		for(String sh : s){
+			toda+=sh + " ";
+		}
+		for(int I = 0; I < toda.length() - n; I++){
+			String x = "";
 			for(int J = I; J < I + n;J++){
-				x += " " + s.get(I).charAt(J);
+				x += toda.charAt(J);
 			}
 			shingles.add(x);
 		}

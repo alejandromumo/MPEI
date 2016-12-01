@@ -1,29 +1,39 @@
 import java.io.File;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainMinHash {
-	private static int numhashfuncs = 100;
-	private static boolean  printMatrix = true;
+	private static int numhashfuncs;
+	private static boolean  printMatrix = false;
 	private static Map<Integer,String> docNameNumber;
 
+	/*
+	 * USAGE: 	colocar em pathToFiles a pasta onde os ficheiros .txt estão alocados
+	 * 			colocar em agrupar o número que queremos agrupar os shingles em
+	 * 			colocar em numRowsPerBand a quantidade de linhas por banda		
+	 * 			colocar em factor o fator que queremos para calcular o número de buckets (factor * numDocs)
+	 * 			colocar em minCollisions o número mínimo de colisões para calcular a distância de Jaccard de dois documentos
+	 * 			colocar em numhashfuncs o número de hash functions a utilizar
+	 * 			colocar em test_books,test_aula,test_big o tipo de teste a fazer
+	 * 			colocar em group_by_words caso os shingles sejam para agrupar em words em vez de chars
+	 * 			DEBUG : printMatrix para mostrar o estado da matriz de signaturas nos diferentes módulos
+	 * */	
+	
 	public static void main(String[] args) {
 		
-		/*
-		 * USAGE: 	colocar em pathToFiles a pasta onde os ficheiros .txt estão alocados (por default é a pasta docs do projeto)
-		 * 			colocar em agrupar o número que queremos agrupar os shingles em
-		 * 			colocar em numRowsPerBand a quantidade de linhas por banda		
-		 * 			colocar em factor o fator que queremos para calcular o número de buckets (factor * numDocs)
-		 * 			colocar em minCollisions o número mínimo de colisões para calcular a distância de Jaccard de dois documentos
-		 * 			DEBUG : printMatrix para mostrar o estado da matriz de signaturas nos diferentes módulos
-		 * */	
+		String pathToFiles = "";
+		int agrupar = 10; 			// 5 - Pequenos ficheiros. 10 - Grandes ficheiros.
+		int factor = 100000;			// Deve garantir que há menor probabilidade de colisão ao mapear em buckets
+		int numRowsPerBand = 2; 	// Enquanto maior, menor o minCollisions deve ser e vice-versa.
+		int minCollisions = 10;
+		boolean test_books = false;
+		boolean test_aula = true;
+		boolean test_big = false;
+		boolean group_by_words = false;
+		numhashfuncs = 100;
 		
-		String pathToFiles = "C:/Users/mumox/workspace/MPEI/src/docs";
-		int agrupar = 10; // Agrupar n a n
-		int factor = 100000;
-		int numRowsPerBand = 2;
-		int minCollisions = 15;
 		
 		
 		
@@ -32,6 +42,15 @@ public class MainMinHash {
 		 *       Zona de código			*
 		 * 								*
 		 ********************************/
+		if(!test_aula && !test_big && !test_books)
+			throw new InvalidPathException(" ", "Não foi indicado um path");
+		String workspace = System.getProperty("user.dir");
+		if(test_aula)
+			pathToFiles = workspace + "/src/docs/Apresentacao/AulaTest";
+		else if(test_books)
+			pathToFiles = workspace + "/src/docs/Books";
+		else if(test_big)
+			pathToFiles = workspace + "/src/docs/Apresentacao/BigTest";
 		
 		ArrayList<ArrayList<String>> docs = new ArrayList<ArrayList<String>>();
 		File folder = new File(pathToFiles);
@@ -55,7 +74,7 @@ public class MainMinHash {
 		Shingles sh;
 		int numDocs = docs.size();
 		int numBuckets = factor * numDocs;
-		sh = new Shingles(docs, agrupar);
+		sh = new Shingles(docs, agrupar,group_by_words);
 		MinHash mh = new MinHash(sh.getShingles());
 		if(printMatrix){
 			System.out.printf("MAIN matrix\n");
@@ -66,7 +85,7 @@ public class MainMinHash {
 		// Get Documents by columns
 		for (Pair p : lsh.getPairs_table().keySet()) {
 			if (lsh.getPairs_table().get(p) >= minCollisions) {
-				System.out.printf("Calculating Jaccard for pair %s docs %s and %s \n",p.toString(),docNameNumber.get(p.getDoc1()),docNameNumber.get(p.getDoc2()));
+				System.out.printf("Calculating Jaccard for pair %s. Docs %s -> %s \n",p.toString(),docNameNumber.get(p.getDoc1()),docNameNumber.get(p.getDoc2()));
 				calculateJaccard(getDocSig(p.getDoc1(), mh.getSignaturesMatrix()), getDocSig(p.getDoc2(), mh.getSignaturesMatrix()));
 			}
 		}
@@ -104,11 +123,13 @@ public class MainMinHash {
 	private static void calculateJaccard(ArrayList<Integer> doc1_sig, ArrayList<Integer> doc2_sig) {
 		int intersection = 0;
 		for (int I = 0; I < doc1_sig.size(); I++) {
-			if (doc1_sig.get(I) == doc2_sig.get(I))
+			if (doc1_sig.get(I).intValue() == doc2_sig.get(I).intValue())
+			{
 				intersection++;
+			}
 		}
 
-		double jaccard = (100 * intersection / numhashfuncs);
+		double jaccard = (100 * intersection / doc1_sig.size());
 		System.out.printf("Intersection = %d | Reunion = %d | Jacccard = %3.1f\n", intersection, numhashfuncs, jaccard);
 
 	}

@@ -9,6 +9,7 @@ public class BloomFilter {
 	 * 	- k 	: Number of hash functions to be used
 	 * 	- size 	: Size of the bloom filter
 	 * */
+	
 	public BloomFilter(int k, int size) {
 		this.size = size;
 		this.k = k;
@@ -35,15 +36,11 @@ public class BloomFilter {
 	private int hashCode(parameters p, String key) {
 		int length = key.length();
 		int hk;
-		int[] keysInDouble = new int[length];
-		for (int I = 0; I < length; I++) {
-			keysInDouble[I] = (int) key.charAt(I);
+		hk = key.charAt(0);
+		for (int J = 1; J < length; J++) {
+			hk = (p.getC() * hk + key.charAt(J)) % p.getP();
 		}
-		hk = keysInDouble[0];
-		for (int J = 0; J < length; J++) {
-			hk = p.getC() * hk + keysInDouble[J] % p.getP();
-			hk = ((p.getA() * hk + p.getB() % p.getP()) % p.getM()) + 1;
-		}
+		hk = (((p.getA() * hk + p.getB()) % p.getP()) % p.getM()) + 1;
 		if(hk < 0)
 			hk = Math.abs(hk);
 
@@ -69,14 +66,14 @@ public class BloomFilter {
 	
 	public void initHashFunc(int m, parameters p) {
 		int ff = 1000;
-		int pp = ff * Math.max(m + 1, 76);
+		int pp = ff * Math.max(m + 1, 76); // Escolher melhor primo base
 		if (pp % 2 == 0)
 			pp = pp + 1;
 		while (!isPrime(pp)) {
 			pp += 2;
 		}
 		Random r = new Random();
-		int upperBound = (int) pp - 1;
+		int upperBound = pp - 1;
 		p.setA(r.nextInt(upperBound - 1) + 1);
 		p.setB(r.nextInt(upperBound));
 		p.setC(r.nextInt(upperBound - 1) + 1);
