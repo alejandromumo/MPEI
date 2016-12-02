@@ -14,20 +14,20 @@ public class MainMinHash {
 	 * 			colocar em agrupar o número que queremos agrupar os shingles em
 	 * 			colocar em numRowsPerBand a quantidade de linhas por banda		
 	 * 			colocar em factor o fator que queremos para calcular o número de buckets (factor * numDocs)
-	 * 			colocar em minCollisions o número mínimo de colisões para calcular a distância de Jaccard de dois documentos
+	 * 			colocar em minCollisions o número mínimo de colisões para calcular a distância de Jaccard
 	 * 			colocar em numhashfuncs o número de hash functions a utilizar
 	 * 			colocar em test_books,test_aula,test_big o tipo de teste a fazer
 	 * 			colocar em group_by_words caso os shingles sejam para agrupar em words em vez de chars
 	 * 			DEBUG : printMatrix para mostrar o estado da matriz de signaturas nos diferentes módulos
-	 * */	
+	 */	
 	
 	public static void main(String[] args) {
 		
 		String pathToFiles = "";
-		int agrupar = 10; 			// 5 - Pequenos ficheiros. 10 - Grandes ficheiros.
-		int factor = 100000;			// Deve garantir que há menor probabilidade de colisão ao mapear em buckets
+		int agrupar = 5; 			// 5 - Pequenos ficheiros. 10 - Grandes ficheiros.
+		int factor = 10000;			// Deve garantir que há menor probabilidade de colisão ao mapear em buckets
 		int numRowsPerBand = 2; 	// Enquanto maior, menor o minCollisions deve ser e vice-versa.
-		int minCollisions = 10;
+		int minCollisions = 15;
 		boolean test_books = false;
 		boolean test_aula = true;
 		boolean test_big = false;
@@ -42,15 +42,18 @@ public class MainMinHash {
 		 *       Zona de código			*
 		 * 								*
 		 ********************************/
-		if(!test_aula && !test_big && !test_books)
-			throw new InvalidPathException(" ", "Não foi indicado um path");
 		String workspace = System.getProperty("user.dir");
-		if(test_aula)
-			pathToFiles = workspace + "/src/docs/Apresentacao/AulaTest";
-		else if(test_books)
-			pathToFiles = workspace + "/src/docs/Books";
-		else if(test_big)
-			pathToFiles = workspace + "/src/docs/Apresentacao/BigTest";
+		if(pathToFiles.equals("")){
+			if(test_aula)
+				pathToFiles = workspace + "/src/docs/Apresentacao/AulaTest";
+			else if(test_books)
+				pathToFiles = workspace + "/src/docs/Books";
+			else if(test_big)
+				pathToFiles = workspace + "/src/docs/Apresentacao/BigTest";
+		}
+		if(pathToFiles.equals(""))
+			throw new InvalidPathException(" ", "Não foi indicado um path");
+
 		
 		ArrayList<ArrayList<String>> docs = new ArrayList<ArrayList<String>>();
 		File folder = new File(pathToFiles);

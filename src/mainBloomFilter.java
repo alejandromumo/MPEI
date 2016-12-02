@@ -8,10 +8,13 @@ public class mainBloomFilter {
 		/*
 		 * Usage: 	colocar em k o número de hash functions a serem utilizadas
 		 * 			colocar em size o tamanho do bloom filter
-		 * 			colocar na pasta src/docs/Apresentacao/BloomFilter os ficheiros de membros e de elementos a testar.
-		 * 			colocar nos campos MemberFileName e TestFileName os nomes dos ficheiros de Membros e de Teste respetivamente
+		 * 			colocar na pasta src/docs/Apresentacao/BloomFilter os ficheiros 
+		 * 				de membros e de elementos a testar.
+		 * 			colocar nos campos MemberFileName e TestFileName os nomes 
+		 * 				dos ficheiros de Membros e de Teste respetivamente
 		 * 
-		 * */
+		 */
+		
 	  	int size = 50000;
 	  	int k = 100;
 	  	String MemberFileName = "diccionario_PTF.txt";
